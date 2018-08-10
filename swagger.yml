@@ -1,0 +1,852 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: dev-test-api
+  x-logo:
+    url: 'https://s3.amazonaws.com/scw-images/scwlogo_w.png'
+    backgroundColor: '#324052'
+  description: |
+    # Introduction
+    The dev-test-api is built on HTTP and is a RESTful API.  You are able to pull SDKs
+    from API Gateway in order to untilize in your favorite front end framework.
+
+    # Authentication
+    When you sign up for an account, you are given your first API key.
+    You can generate additional API keys, and delete API keys (as you may
+    need to rotate your keys in the future). You authenticate to the
+    dev-test-api by providing your secret key in the request header (x-api-key).
+
+    dev-test-api offers three forms of authentication:  secret api key, public api key, and JSON Web Tokens
+    - [PrivateApiKey](#section/Authentication/PrivateApiKey): used for requests made from the server side. Never share these keys. Keep them guarded and secure
+    - [PublicApiKey](#section/Authentication/PublicApiKey): used for requests from the client side. These will be keys for customers.
+    - [JWT](#section/Authentication/JWT): short lifetime tokens that can be assigned a specific expiration time
+
+    Never share your secret keys. Keep them guarded and secure.
+
+    <!-- ReDoc-Inject: <security-definitions> -->
+servers:
+  - url: https://dev-test-api.scw.video
+    description: Production Endpoint
+  - url: https://{apiId}.execute-api.us-east-1.amazonaws.com/{stage}
+    description: AWS Endpoint
+    variables:
+      apiId:
+        enum:
+          - bwywv3qu9b
+          - miuyswjoe4
+        default: bwywv3qu9b
+      stage:
+        enum:
+          - dev
+          - prod
+        default: dev
+  - url: http://localhost:3000
+    description: Local Endpoint
+x-amazon-apigateway-api-key-source : "HEADER"
+paths:
+  # Admin Users
+  /admins/signup:
+    get:
+      summary: Retrieve registration page for admins
+      tags:
+        - NYI (Not Yet Implemented)
+        - Admins
+      operationId: adminsSignupget
+      responses:
+        200:
+          description: Success
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+    post:
+      summary: Register admin user with body
+      description: |
+        This will be the method used for register new users for dev-test-api.
+        To register a user you will need to pass signup, authorize to change
+        the password, then pass an MFA token.
+      tags:
+        - Admins
+      operationId: adminsSignuppost
+      requestBody:
+        description: Object with Cognito Admin User attributes
+        required: true
+        content:
+          application/json:
+            example: {"givenName":"Bryan","familyName":"Killian","email":"bryan.killian@security-camera-warehouse.com","gender":"male","phoneNumber1":"+18284507759","userName": "Trilom1", "password": "Test1234!"}
+            schema:
+              $ref: "#/components/schemas/CognitoUserRequest"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CognitoUser"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  /admins/auth:
+    post:
+      summary: Login a dev-test-api admin user
+      description: |
+        Pass old password and new password to change password or pass in Password
+        and username to retreive mfa code to device.
+      tags:
+        - Admin Auth
+      operationId: adminsAuthpost
+      requestBody:
+        description: Object with Cognito Admin User Auth attributes
+        required: true
+        content:
+          application/json:
+            example: {"userName":"Trilom1","password":"zjt_kWP6","newPassword":"Chicken1@"}
+            schema:
+              $ref: "#/components/schemas/CognitoUserAuthRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/CognitoAuthChallenge"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  /admins/mfa:
+    post:
+      summary: Confirm MFA code for dev-test-api admin user
+      tags:
+        - Admin Auth
+      operationId: adminsMfapost
+      requestBody:
+        description: Object with Cognito Admin User Auth attributes
+        required: true
+        content:
+          application/json:
+            example: {"userName":"Trilom1","mfaCode":"786933","session":"Jk4LP7nW74wOC41qv7-LI0CsGlIuxieODNl_KuVN5boaswp4s0K7q0YKeOGcyMn67yhbvU3BzM0PB3QeP5RFZXfdHcgdAyXG4QvMCcsNYPuaVz4EGZOqRpr3Ea95xlpdq7mnzBwPtx0d80vDmRiDf9Q87QMu2WYUHTj-_sOcuYeOfCZFal0d5gCl-e6IWGN6gRvJejEZ5cuqVbAcWydGRqXRLzRqSSz_P1VSGVh5ZCVYO49prxvX-vs8T1QoEpT11fQwFajyF-DEvFgFcM2ux93oOXbnhbM4Hrv94vYVim_R29jEsp37CQ5NT2hE-5s49wkmUNI5tD1oq1Yrk_tIL8UnkeHFLhiIgBJfdCNJR31O6ByiCF5aUQYFaZMxYn6GZSj4v7lt4GLFzZy6g-lA7_FNoT7dVOEkalJJfpuhGKEnm92gkoyV-hIXzZlCBbvq5MUMwL0bH6ht0m50yupNodJwstPdBkdgwk6rYrda7EYaskj7faObGxqWPGYFhWBrm7Xf3YMvSIhv6t8SZKu7cx0ODQr9gNOERZYTHchzpVEzDrBmzldnw7rfuLKYL74SbveX2KGCKbBFR5-BpnvGuFlO0AhVk2G1n6NbJ6F78gqD3XzUlLli2K5tiD81W9I5FipFN9GCKXUZcpz7nDcud8XLhGv40dDPUH2YTeej5PMxtqdLoJE0ecW9Hm4YE3f3JY22LhVpmNvHX6NvjuTyTZzUgAFp90keaXdJJbztum5YSumTBbsOUXk18sDK6fqnrtwdei2xO1U2q40GzwtYlLxkyFtfuAKgLSOkV7chpS5AQ8Kwy7uaqJxcfP3Ozm32yZr-1l_sTUMnq0Alz4BZxPKxWwPLK-9urd1oduqdfGD-jR3MeY5y1NOeTK9QJqNGZaHEyFI_QnptiZ_vIyJvP91cQSnvTnDC6Om4GptrNy0U_fQ8B1eRBfwYl25ML1swWiCwlv-3Innvo33zTTNqwsoViZiP546Y-f5DIPEn9BMLqR2iCfBkMSJcKGVU8GGtNRacMrwfH7FEu1rN9HwQvB-ifWMXs5mzizz89b1ctEX0A_x4uOj1p98KXa-hF63H3yAg_v6_TUAvQCI2dZqTNKEz--YR3LT7OgsseX6xJEh9JA8bImiORHJC7_weBJcNakM6ctVsU8mhNKaLgTV7d4p23gYZghs1-Jnayc8IxowfirDMXJmkwOA4DVBFaXdXNricgnwRq0LKE0lACl0NC9vV_iQCG24VedEiH1GV-LSnfhR1"}
+            schema:
+              $ref: "#/components/schemas/CognitoUserMfaRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/CognitoAuthChallenge"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  /admins/mfa/{userName}:
+    get:
+      summary: Resend MFA code for dev-test-api admin user
+      tags:
+        - Admin Auth
+        - NYI (Not Yet Implemented)
+      operationId: adminsMfaget
+      responses:
+        200:
+         $ref: "#/components/responses/CognitoAuthChallenge"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+        - $ref: "#/components/parameters/UserNamePath"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  /admins/mfa/disable/{userName}:
+    put:
+      summary: Disable a dev-test-api admins user MFA
+      tags:
+        - Admin Auth
+        - NYI (Not Yet Implemented)
+      operationId: adminsDisableMfaput
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+        - $ref: "#/components/parameters/UserNamePath"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  /admins/mfa/enable/{userName}:
+    put:
+      summary: Enable a dev-test-api admins user MFA
+      tags:
+        - Admin Auth
+        - NYI (Not Yet Implemented)
+      operationId: adminsEnableMfaput
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+        - $ref: "#/components/parameters/UserNamePath"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  /admins/disable/{userName}:
+    put:
+      summary: Disable a dev-test-api admin user
+      tags:
+        - Admins
+      operationId: adminsDisableput
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+        - $ref: "#/components/parameters/UserNamePath"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  /admins/enable/{userName}:
+    put:
+      summary: Enable a dev-test-api admin user
+      tags:
+        - Admins
+      operationId: adminsEnableput
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+        - $ref: "#/components/parameters/UserNamePath"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  /admins/confirm/{userName}:
+    put:
+      summary: Confirm a newly registered dev-test-api admin user
+      tags:
+        - Admins
+      operationId: adminsConfirmput
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+        - $ref: "#/components/parameters/UserNamePath"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+  /admins/{userName}:
+    delete:
+      summary: Delete a dev-test-api admin user.
+      description: |
+        This will disable and delete the user if the user is currently enabled.
+      tags:
+        - Admins
+      operationId: adminsdelete
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+        - $ref: "#/components/parameters/UserNamePath"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+    get:
+      summary: Get a dev-test-api admin user.
+      description: |
+        This will pull user information including attributes for a Cognito UserPool User
+      tags:
+        - Admins
+      operationId: adminsget
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+        - $ref: "#/components/parameters/UserNamePath"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CognitoUser"
+        204:
+          $ref: "#/components/responses/NoContent"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+    # post:
+    #   summary: Edits existing Cloud user by {uid} parameter provided and User Object in the body.
+    #   description: This can only be done from an authenticated CRM user with permissions to modify Cloud users.
+    #   tags:
+    #     - NYI (Not Yet Implemented)
+    #   operationId: editCloudUser
+    #   requestBody:
+    #     description: User object to be edited
+    #     required: true
+    #     content:
+    #       'application/json':
+    #         schema:
+    #           $ref: "#/components/schemas/User"
+    #   parameters:
+    #     - $ref: "#/components/parameters/Uid"
+    #   responses:
+    #     200:
+    #       $ref: "#/components/responses/editCloudUserResponse"
+    #     default:
+    #       $ref: "#/components/responses/ErrorResponse"
+  /admins/logout/{userName}:
+    put:
+      summary: Logout a logged in registered dev-test-api admin user
+      tags:
+        - Admins
+      operationId: adminsLogoutput
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        403:
+          $ref: "#/components/responses/AccessForbidden"
+        500:
+          description: Failure
+      parameters:
+        - $ref: "#/components/parameters/X-Api-Key"
+        - $ref: "#/components/parameters/UserNamePath"
+      security:
+        - PrivateApiKey: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userFunctions.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+security:
+  - PublicApiKey: []
+  - PrivateApiKey: []
+  - JWT: []
+# complex objects have schema definitions
+components:
+  responses:
+    CognitoAuthChallenge:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CognitoAuth"
+    #error handlers
+    AccessForbidden:
+      description: 'Access forbidden, invalid x-api-key was used'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InvalidDataError:
+      description: Invalid data was sent
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidError'
+    NoContent:
+      description: No Content Response
+    ErrorResponse:
+      description: General error response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  parameters:
+    FirstName:
+      in: query
+      name: firstName
+      description: first name of User object to return
+      schema:
+        type: string
+    LastName:
+      in: query
+      name: lastName
+      description: last name of User object to return
+      schema:
+        type: string
+    Email:
+      in: query
+      name: email
+      description: email of User object to return
+      schema:
+        type: string
+        format: email
+    PhoneNumber1:
+      in: query
+      name: phoneNumber1
+      description: phoneNumber1 of User object to return
+      schema:
+        type: string
+    Uid:
+      in: path
+      name: uid
+      description: uid of User object to edit
+      required: true
+      schema:
+        type: integer
+        format: int64
+    User:
+      in: path
+      name: User
+      description: User object
+      required: true
+      schema:
+        $ref: "#/components/schemas/User"
+    UserName:
+      in: query
+      name: userName
+      description: The user name for Cloud user
+      required: true
+      schema:
+        type: string
+    UserNamePath:
+      in: path
+      name: userName
+      description: The user name for Cloud user
+      required: true
+      schema:
+        type: string
+    Password:
+      in: query
+      name: password
+      description: The password for login in clear text for Cloud user
+      required: true
+      schema:
+        type: string
+    AccountLevel:
+      in: path
+      name: accountLevel
+      description: new accountLevel parameter to be set for uid
+      required: true
+      schema:
+        $ref: "#/components/schemas/accountLevel"
+    UserStatus:
+      in: path
+      name: userStatus
+      description: Users current status
+      required: true
+      schema:
+        $ref: "#/components/schemas/userStatus"
+    UserLevel:
+      in: query
+      name: userLevel
+      schema:
+        $ref: "#/components/schemas/userLevel"
+      required: true
+    X-Api-Key:
+      in: header
+      name: x-api-key
+      description: aws API Gateway key
+      required: true
+      schema:
+        $ref: "#/components/headers/X-Api-Key/schema"
+  headers:
+    X-Api-Key:
+      description: AWS API Gateway X-Api-Key for dev-test-api
+      schema:
+        type: string
+    X-Rate-Limit:
+      description: calls per hour allowed by the user
+      schema:
+        type: integer
+        format: int32
+    X-Expires-After:
+      description: date in UTC when token expires
+      schema:
+        type: string
+        format: date-time
+    Access-Control-Allow-Headers:
+      description: CORS allowed Headers
+      schema:
+        type: string
+    Access-Control-Allow-Methods:
+      description: CORS allowed Methods
+      schema:
+        type: string
+    Access-Control-Allow-Origin:
+      description: CORS allowed Origin
+      schema:
+        type: string
+    Access-Control-Request-Method:
+      description: CORS Request Method for Preflight
+      schema:
+        type: string
+  schemas:
+    Empty:
+      type: object
+      title: Empty Schema
+    #enums
+    userStatus:
+      type: string
+      enum:
+        - active
+        - inactive
+        - frozen
+    accountLevel:
+      type: string
+      enum:
+        - lite
+        - edge
+        - one
+        - many
+    userLevel:
+      type: string
+      enum:
+        - admin
+        - user
+    #objects
+    Error:
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 100
+          maximum: 600
+        error:
+          type: string
+    InvalidError:
+      allOf:
+        - $ref: '#/components/schemas/Error'
+        - type: object
+          properties:
+            details:
+              type: array
+              items:
+                type: string
+    CognitoUserAuthRequest:
+      type: object
+      properties:
+        userName:
+          type: string
+        password:
+          type: string
+        newPassword:
+          type: string
+      required:
+        - userName
+        - password
+    CognitoUserMfaRequest:
+      type: object
+      properties:
+        userName:
+          type: string
+        mfaCode:
+          type: integer
+          minimum: 0
+          maximum: 999999
+        session:
+          type: string
+      required:
+        - userName
+        - mfaCode
+        - session
+    CognitoUserRequest:
+      type: object
+      properties:
+        givenName:
+          type: string
+        familyName:
+          type: string
+        email:
+          type: string
+          format: email
+        gender:
+          type: string
+        phoneNumber1:
+          type: string
+        userName:
+          type: string
+        password:
+          type: string
+      required:
+        - givenName
+        - familyName
+        - email
+        - gender
+        - phoneNumber1
+        - userName
+    CognitoUser:
+      type: object
+      properties:
+        User:
+          type: object
+          properties:
+            Username:
+              type: string
+            UserAttributes:
+              type: array
+              items:
+                type: object
+                properties:
+                  Name:
+                    type: string
+                  Value:
+                    type: string
+            Attributes:
+              type: array
+              items:
+                type: object
+                properties:
+                  Name:
+                    type: string
+                  Value:
+                    type: string
+            UserCreatedDate:
+              type: string
+              format: date-time
+            UserLastModifiedDate:
+              type: string
+              format: date-time
+            Enabled:
+              type: boolean
+            UserStatus:
+              type: string
+            PreferredMfaSetting:
+              type: string
+            UserMFASettingList:
+              type: array
+              items:
+                type: string
+        ResponseMetadata:
+          $ref: "#/components/schemas/AWSResponseMetadata"
+    CognitoAuth:
+      type: object
+      properties:
+        ChallengeName:
+          type: string
+        Session:
+          type: string
+        ChallengeParameters:
+          type: object
+          properties:
+            CODE_DELIVERY_DELIVERY_MEDIUM:
+              type: string
+            CODE_DELIVERY_DESTINATION:
+              type: string
+            USER_ID_FOR_SRP:
+              type: string
+        ResponseMetadata:
+          $ref: "#/components/schemas/AWSResponseMetadata"
+        AuthenticationResult:
+          $ref: "#/components/schemas/CognitoAuthenticationResult"
+    CognitoAuthenticationResult:
+      type: object
+      properties:
+        AccessToken:
+          type: string
+        ExpiresIn:
+          type: integer
+          maximum: 3600
+        TokenType:
+          type: string
+        RefreshToken:
+          type: string
+        IdToken:
+          type: string
+    AWSResponseMetadata:
+      type: object
+      properties:
+        RequestId:
+          type: string
+        HTTPStatusCode:
+          type: integer
+          minimum: 100
+          maximum: 600
+        HTTPHeaders:
+          type: object
+          properties:
+            date:
+              type: string
+            content-type:
+              type: string
+            content-length:
+              type: string
+            connection:
+              type: string
+            x-amzn-requestid:
+              type: string
+        RetryAttempts:
+          type: integer
+    User:
+      type: object
+      properties:
+        uid:
+          type: integer
+          format: int64
+        orgid:
+          type: integer
+          format: int64
+        siteid:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          $ref: "#/components/schemas/userStatus"
+        accountLevel:
+          $ref: "#/components/schemas/accountLevel"
+  securitySchemes:
+    PrivateApiKey:
+      description: |
+        This API key is created within the SAM template and is used to authenticated
+        to endpoints within the API that require an API key.  This will be a key
+        granted ideally by the /user/signup/admin page.
+      type: apiKey
+      in: header
+      name: x-api-key
+    PublicApiKey:
+      description: |
+        This API key is created within the SAM template and is used to authenticated
+        to endpoints within the API that require an API key.  This will be a key
+        granted ideally by the /user/signup page.
+      name: x-api-key
+      type: apiKey
+      in: header
+    JWT:
+      description: |
+        This will be a JWT token granted by Cognito IdP.
+      name: 'Authorization: Bearer jwt'
+      type: apiKey
+      in: header
+x-tagGroups:
+  - name: Authorization
+    tags:
+      - Admin Auth
+  - name: Users
+    tags:
+      - Admins
+tags:
+  - name: Admin Auth
+    description: |
+      Auth is a internal endpoint that facilitates authentication, authorization,
+      and registration for the dev-test-api.  This provides an endpoint for internal s
+      registrations.
+  - name: Admins
+    description: |
+      Admin is a internal endpoint that facilitates user information for SCW employees.
+      It will be used to add, remove edit, and manage all aspects of users for the API.
