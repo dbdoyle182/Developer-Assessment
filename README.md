@@ -2,13 +2,10 @@
 This is a repository for developer assessments.
 
 ## Goals
-The expectation of this assessment is to challenge your ability to digest our API,
-and create a result that is a web front end that can be used to sign up, login,
-logout, and read the current users information.
+The expectation of this assessment is to challenge your ability to digest our API, and create a result that is a web front end that can be used to sign up, login, logout, and read the current users information.
 
 1. https://securitycamerawarehouse.github.io/Developer-Assessment/
-  1. Read through the swagger documentation, if you find any errors please report
-  them to us, we are still working on this.
+    1. Read through the swagger documentation, if you find any errors please report them to us, we are still working on this.
 
 2. Requirements:
     1. Use the Swagger documentation to create a front end in the language and framework of your choice.
