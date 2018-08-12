@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import axios from 'axios';
 import { Segment, List } from 'semantic-ui-react';
 
@@ -6,19 +6,19 @@ import { Segment, List } from 'semantic-ui-react';
 
 
 class UserPage extends Component {
-
   state = {
     user: {}
   }
 
   componentDidMount() {
-    axios.get('https://rkprv2kx5b.execute-api.us-east-1.amazonaws.com/dev/admins/Trilom1', {
+    console.log(this.props)
+    axios.get(`https://rkprv2kx5b.execute-api.us-east-1.amazonaws.com/dev/admins/${this.props.userName}`, {
       headers: {
         "x-api-key": "RfgackFzlO2IKAhmukniT25ZYIGbSyIH788tvf32"
       }
     }).then(res => {
       const user = JSON.parse(res.data.body);
-      console.log(user)
+      console.log(res)
       this.setState({
         user: user
       })
@@ -28,9 +28,10 @@ class UserPage extends Component {
   }
 
   render() {
-    const { user } = this.state
+    const { user } = this.state;
     return (
       <div>
+      {console.log(user)}
         <Segment.Group>
           <Segment>User Information</Segment>
           {user.UserAttributes &&

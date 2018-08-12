@@ -15,24 +15,12 @@ class App extends Component {
     return (
       <div>
         <ModalManager/>
-        <NavBar />
-        <Container>
+        <NavBar/>
+        <Container className="landing_page_body">
           <Switch>
             <Route exact path='/' component={LandingPage} />
           </Switch>
         </Container>
-
-        <Route path="/(.+)" render={() => (
-          <div>
-            <Container>
-              <Route path='/login' component={LoginPage} />
-              <Route path='/signup' component={SignUpPage} />
-              <Route path='/user/:id' component={UserPage} />
-              {//<Route path='/optiontwo' component={CombinedPage} />
-        }
-            </Container>
-          </div>
-        )} />
       </div>
     );
   }

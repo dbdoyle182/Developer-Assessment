@@ -1,27 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { NavLink, Link, withRouter } from 'react-router-dom';
-import { Menu, Container, Button } from 'semantic-ui-react';
+import { Link, withRouter } from 'react-router-dom';
+import { Menu, Container } from 'semantic-ui-react';
+import axios from 'axios';
 import SignedOutMenu from './SignedOutMenu';
 import SignedInMenu from './SignedInMenu';
 import { openModal } from '../store/modals/modalActions';
+import { logout } from '../store/auth/authActions';
 
 
 const actions = {
-    openModal
+    openModal,
+    logout
 }
 
-const mapState = state => {
-    return state
-}
-
-// const mapState = state => ({
-//     auth: state.auth
-// })
+const mapState = state => ({
+    auth: state.auth
+})
 class NavBar extends Component {
-    state = {
-        authenticated: false
-    }
 
     handleLogin = () => {
         this.props.openModal('LoginModal')
@@ -29,34 +25,39 @@ class NavBar extends Component {
 
     handleSignUp = () => {
         this.props.openModal('SignUpModal');
-        console.log("This Works")
     }
 
-    handleLogOut = () => {
-        this.setState({
-            authenticated: false
+    handleLogOut = (user) => {
+        axios.put(`https://rkprv2kx5b.execute-api.us-east-1.amazonaws.com/dev/admins/logout/${user}`,
+        {"userName": user},
+        {
+        headers: {
+            "x-api-key": "RfgackFzlO2IKAhmukniT25ZYIGbSyIH788tvf32"
+        }
+        }).then(res => {
+            console.log(res)
+            this.setState({
+                user: {}
+            })
+            this.props.logout()
+        }).catch(err => {
+            console.log(err)
         })
-        this.props.history.push('/')
+        
     }
 
     render() {
-        const { authenticated } = this.state
+        const { auth } = this.props
         
         return (
-            <Menu inverted>
+            <Menu inverted fixed="top">
                 <Container>
                 <Menu.Item as={Link} to='/' header>
                     Home
                 </Menu.Item>
                 
-
-                {authenticated && 
-                <Menu.Item>
-                    <Button as={Link} to='/createEvent' floated="right" positive inverted content="Create Event" />
-                </Menu.Item>
-                }
-                {authenticated ?
-                    <SignedInMenu logOut={this.handleLogOut}/>
+                {auth.authenticated ?
+                    <SignedInMenu logOut={() => this.handleLogOut(auth.currentUser.creds.userName)}/>
                     :
                     <SignedOutMenu logIn={this.handleLogin} signUp={this.handleSignUp}/>
                 }
