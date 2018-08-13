@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import {Modal} from 'semantic-ui-react';
 import {connect} from 'react-redux';
 import {closeModal} from "./modalActions";
-import LoginPage from '../../pages/LoginPage/LoginPage';
+import ChangePasswordPage from "../../pages/ChangePassword/ChangePasswordPage";
 
 const actions = {closeModal};
 
-class LoginModal extends Component {
+class PasswordModal extends Component {
     render() {
         return (
             <Modal
@@ -15,11 +15,11 @@ class LoginModal extends Component {
                 onClose={this.props.closeModal}
             >
                 <Modal.Header>
-                    Login to SCW
+                    ChangePassword
                 </Modal.Header>
                 <Modal.Content>
                     <Modal.Description>
-                        <LoginPage />
+                        <ChangePasswordPage />
                     </Modal.Description>
                 </Modal.Content>
             </Modal>
@@ -27,4 +27,4 @@ class LoginModal extends Component {
     }
 }
 
-export default connect(null, actions)(LoginModal);
+export default connect(null, actions)(PasswordModal);

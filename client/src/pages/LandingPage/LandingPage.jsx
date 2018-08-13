@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import axios from 'axios'
 import { connect } from 'react-redux';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Image, Header, Icon } from 'semantic-ui-react';
 import UserPage from '../UserPage/UserPage';
 import CombinedPage from '../CombinedPage/CombinedPage';
 
@@ -18,10 +17,14 @@ class LandingPage extends Component {
       <div>
         <Grid className="landing_page_body">
           <Grid.Column width={10}>
+          <Image id="scw_logo" src="https://www.security-camera-warehouse.com/skin/frontend/default/scw-bootstrapped/images/scwlogo_w.png" size="large" alt="Security Camera Warehouse"/>
           {!auth.authenticated ?
-            <div>
-              <p>Please log in or sign up to see your user credentials</p>
-              <img src="https://www.security-camera-warehouse.com/skin/frontend/default/scw-bootstrapped/images/scwlogo_w.png" alt="Security Camera Warehouse" />
+            <div className="noauth_info">
+              <Header as='h2' icon>
+                <Icon name='id card' />
+                   Account Information
+                <Header.Subheader>Log In or Sign Up to access your account information</Header.Subheader>
+              </Header> 
             </div>
             :
             <UserPage userName={auth.currentUser.creds.userName}/>

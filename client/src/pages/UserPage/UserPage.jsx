@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import axios from 'axios';
-import { Segment, List } from 'semantic-ui-react';
+import { Segment, List, Loader, Dimmer, Button } from 'semantic-ui-react';
+import { openModal } from '../../store/modals/modalActions';
 
-
-
+const actions = {
+  openModal
+}
 
 class UserPage extends Component {
   state = {
@@ -29,20 +32,27 @@ class UserPage extends Component {
 
   render() {
     const { user } = this.state;
+    const {openModal} = this.props;
     return (
-      <div>
-      {console.log(user)}
+      <div className="user_info">
         <Segment.Group>
-          <Segment>User Information</Segment>
-          {user.UserAttributes &&
+          <Segment>User Information <Button onClick={() => openModal("PasswordModal")} content="Change Password" basic/></Segment>
+        
+          {user.UserAttributes ?
           <Segment.Group>
             <List>
-              <List.Item className='data' icon='address card outline' content={`Full Name: ${user.UserAttributes[3].Value} ${user.UserAttributes[4].Value}`} />
-              <List.Item className='data' icon='user' content={`Username: ${user.Username}`} />
-              <List.Item className='data' icon='mail' content={`Email: ${user.UserAttributes[5].Value}`} />
-              <List.Item className='data' icon='phone' content={`Phone Number: ${user.UserAttributes[2].Value}`} />
+              <List.Item id='data' icon='address card outline' content={`Full Name: ${user.UserAttributes[3].Value} ${user.UserAttributes[4].Value}`} />
+              <List.Item id='data' icon='user' content={`Username: ${user.Username}`} />
+              <List.Item id='data' icon='mail' content={`Email: ${user.UserAttributes[5].Value}`} />
+              <List.Item id='data' icon='phone' content={`Phone Number: ${user.UserAttributes[2].Value}`} />
             </List>
           </Segment.Group>
+          :
+          <Dimmer active>
+            <Loader>
+              Loading
+            </Loader>
+          </Dimmer>
           }
         </Segment.Group>
       </div>
@@ -50,5 +60,5 @@ class UserPage extends Component {
   }
 }
 
-export default UserPage;
+export default connect(null, actions)(UserPage);
 

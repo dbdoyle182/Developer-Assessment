@@ -50,7 +50,7 @@ class NavBar extends Component {
         const { auth } = this.props
         
         return (
-            <Menu inverted fixed="top">
+            <Menu inverted fixed="top" className="nav_menu">
                 <Container>
                 <Menu.Item as={Link} to='/' header>
                     Home

@@ -68,12 +68,7 @@ class SignUpForm extends Component {
               component={TextInput}
               placeholder="Desired Username"
             />
-            <Field
-              name="password"
-              type="password"
-              component={TextInput}
-              placeholder="Password"
-            />
+            
             <Button disabled={invalid || submitting || pristine} fluid size="large" color="teal" type="submit">
               Register
             </Button>

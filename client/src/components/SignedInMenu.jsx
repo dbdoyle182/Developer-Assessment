@@ -4,7 +4,7 @@ import { Menu, Button } from 'semantic-ui-react';
 export default ({logOut}) => {
   return (
     <Menu.Item position="right">
-        <Button onClick={logOut} content="Log Out" />
+        <Button basic inverted onClick={logOut} content="Log Out" />
     </Menu.Item>
   )
 }

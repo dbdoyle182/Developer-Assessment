@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import LoginForm from '../../components/LoginForm';
+import ChangePassword from '../../components/ChangePassword';
 import {connect} from 'react-redux';
 import axios from 'axios';
 import { login } from '../../store/auth/authActions';
@@ -11,16 +11,17 @@ const actions = {
 }
 
 const mapState = state => ({
-  userLogin: state.form.loginForm
+  password: state.form.changePasswordForm
 })
 
 
-class LoginPage extends Component {
-  handleFormSubmit = (userLogin) => {
+class ChangePasswordPage extends Component {
+  handleFormSubmit = (password) => {
     
     const user = {
-      userName: userLogin.userName,
-      password: userLogin.password
+      userName: password.userName,
+      password: password.password,
+      newPassword: password.newPassword
     };
     
     axios.post('https://rkprv2kx5b.execute-api.us-east-1.amazonaws.com/dev/admins/auth', user, {
@@ -30,9 +31,7 @@ class LoginPage extends Component {
         'Access-Control-Allow-Origin':'*'
       }
     }).then(res => {
-      const userInfo = JSON.parse(res.config.data);
-      console.log(userInfo.userName)
-      this.props.login(userInfo.userName);
+      
       this.props.closeModal();
       
     }).catch(err => {
@@ -44,10 +43,10 @@ class LoginPage extends Component {
     
       return (
       <div>
-        <LoginForm handleSubmit={this.handleFormSubmit}/>
+        <ChangePassword handleSubmit={this.handleFormSubmit}/>
       </div>
       )
   }
 }
 
-export default connect(mapState, actions)(LoginPage);
+export default connect(mapState, actions)(ChangePasswordPage);

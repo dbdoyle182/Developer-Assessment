@@ -23,7 +23,7 @@ class SignUpPage extends Component {
             "gender": signup.gender,
             "phoneNumber1": "+1" + signup.phoneNumber1,
             "userName": signup.userName,
-            "password": signup.password
+            // "password": signup.password
         };
         axios.post('https://rkprv2kx5b.execute-api.us-east-1.amazonaws.com/dev/admins/signup',
         newUser ,
