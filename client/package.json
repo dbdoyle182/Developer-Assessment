@@ -2,9 +2,11 @@
   "name": "client",
   "version": "0.1.0",
   "proxy": "http://localhost:8080/",
+  "homepage": "https://dbdoyle182.github.io/Developer-Assessment/",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "gh-pages": "^1.2.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",
@@ -20,6 +22,8 @@
     "semantic-ui-react": "^0.82.2"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
