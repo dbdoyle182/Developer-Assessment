@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Form, Segment, Button, Label } from 'semantic-ui-react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm, reset } from 'redux-form';
 import { combineValidators, isRequired } from 'revalidate';
 import TextInput from './TextInput';
 
@@ -10,14 +10,19 @@ const mapState = state => ({
 })
 
 const validate = combineValidators({
-  userName: isRequired('User name is required'),
-  password: isRequired('Password is required')
+  userName: isRequired('User name'),
+  password: isRequired('Password')
 })
 
-const LoginForm = ({error, login, invalid, submitting, pristine, handleSubmit}) => {
+const actions = {
+  reset
+}
+
+const LoginForm = ({error, login, invalid, submitting, pristine, handleSubmit, reset}) => {
   return (
     <Form size="large" onSubmit={() => {
       handleSubmit(login.values)
+      reset();
     }}>
       <Segment>
         <Field
@@ -41,4 +46,4 @@ const LoginForm = ({error, login, invalid, submitting, pristine, handleSubmit}) 
   );
 };
 
-export default connect(mapState)(reduxForm({form: 'loginForm',enableReinitialize: true, validate})(LoginForm));
+export default connect(mapState, actions)(reduxForm({form: 'loginForm',enableReinitialize: true, validate})(LoginForm));

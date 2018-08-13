@@ -26,8 +26,7 @@ class LoginPage extends Component {
     axios.post('https://rkprv2kx5b.execute-api.us-east-1.amazonaws.com/dev/admins/auth', user, {
       headers: {
         "x-api-key":"RfgackFzlO2IKAhmukniT25ZYIGbSyIH788tvf32",
-        "Content-Type":"application/json",
-        'Access-Control-Allow-Origin':'*'
+        "Content-Type":"application/json"
       }
     }).then(res => {
       console.log(res)

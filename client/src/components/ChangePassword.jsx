@@ -10,9 +10,9 @@ const mapState = state => ({
 })
 
 const validate = combineValidators({
-  userName: isRequired('User name is required'),
-  password: isRequired('Password is required'),
-  newPassword: isRequired('New password is required')
+  userName: isRequired('User name'),
+  password: isRequired('Password'),
+  newPassword: isRequired('New password')
 })
 
 const ChangePassword = ({error, login, invalid, submitting, pristine, handleSubmit}) => {

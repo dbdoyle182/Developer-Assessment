@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { Form, Segment, Button } from 'semantic-ui-react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm, reset } from 'redux-form';
 import { composeValidators, combineValidators, isRequired, hasLengthGreaterThan } from 'revalidate';
 import { connect } from 'react-redux';
 import TextInput from './TextInput';
 
 const mapState = state => ({
   signup: state.form.signUpForm
-})
+});
+
+const actions = {
+  reset
+}
 
 const validate = combineValidators({
   givenName: isRequired({message: "Please provide your first name"}),
@@ -18,19 +22,22 @@ const validate = combineValidators({
   )(),
   email: isRequired('email'),
   gender: isRequired('gender'),
-  phoneNumber1: isRequired('Phone number is required'),
-  userName: isRequired('Username is required')
-})
+  phoneNumber1: isRequired({message: 'Phone number is required'}),
+  userName: isRequired({message: 'Username is required'})
+});
 
 class SignUpForm extends Component {
 
 
   
   render () {
-    const { signup, invalid, submitting, pristine, handleFormSubmit } = this.props;
+    const { signup, invalid, submitting, pristine, handleFormSubmit, reset } = this.props;
     return (
       <div>
-        <Form size="large" onSubmit={() => handleFormSubmit(signup.values)}>
+        <Form size="large" onSubmit={() => {
+          handleFormSubmit(signup.values)
+          reset();
+        }}>
           <Segment>
             <Field
               name="givenName"
@@ -79,4 +86,4 @@ class SignUpForm extends Component {
   }
 };
 
-export default connect(mapState)(reduxForm({form: 'signUpForm', enableReinitialize: true, validate})(SignUpForm));
+export default connect(mapState, actions)(reduxForm({form: 'signUpForm', enableReinitialize: true, validate})(SignUpForm));

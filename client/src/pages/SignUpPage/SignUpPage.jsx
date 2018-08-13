@@ -30,8 +30,7 @@ class SignUpPage extends Component {
         {
             headers: {
                 "x-api-key":"RfgackFzlO2IKAhmukniT25ZYIGbSyIH788tvf32",
-                "Content-Type":"application/json",
-                'Access-Control-Allow-Origin':'*'
+                "Content-Type":"application/json"
             }
         })
         .then(res => {
