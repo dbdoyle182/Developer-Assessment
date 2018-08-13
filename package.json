@@ -4,7 +4,10 @@
   "description": "This is a repository for developer assessments.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "unitTest": "mocha test/unit_test.js",
+    "intTest": "mocha test/integration_test.js",
+    "installDeps": "npm i && cd client && npm i",
+    "start": "cd client && npm run start"
   },
   "repository": {
     "type": "git",
