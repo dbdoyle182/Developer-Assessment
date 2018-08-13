@@ -5,6 +5,7 @@ import { Field, reduxForm } from 'redux-form';
 import { combineValidators, isRequired } from 'revalidate';
 import TextInput from './TextInput';
 
+
 const mapState = state => ({
   login: state.form.changePasswordForm
 })

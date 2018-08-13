@@ -39,6 +39,7 @@ class SignUpForm extends Component {
           reset();
         }}>
           <Segment>
+            
             <Field
               name="givenName"
               type="text"
@@ -75,7 +76,6 @@ class SignUpForm extends Component {
               component={TextInput}
               placeholder="Desired Username"
             />
-            
             <Button disabled={invalid || submitting || pristine} fluid size="large" color="teal" type="submit">
               Register
             </Button>

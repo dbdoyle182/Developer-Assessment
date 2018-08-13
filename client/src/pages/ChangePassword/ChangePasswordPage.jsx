@@ -28,10 +28,9 @@ class ChangePasswordPage extends Component {
       headers: {
         "x-api-key":"RfgackFzlO2IKAhmukniT25ZYIGbSyIH788tvf32",
         "Content-Type":"application/json",
-        'Access-Control-Allow-Origin':'*'
       }
     }).then(res => {
-      
+      console.log(res)
       this.props.closeModal();
       
     }).catch(err => {

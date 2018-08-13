@@ -1,0 +1,25 @@
+{
+  "name": "developer-assessment",
+  "version": "1.0.0",
+  "description": "This is a repository for developer assessments.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dbdoyle182/Developer-Assessment.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dbdoyle182/Developer-Assessment/issues"
+  },
+  "homepage": "https://github.com/dbdoyle182/Developer-Assessment#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "nightmare": "^3.0.1"
+  }
+}

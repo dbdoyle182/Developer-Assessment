@@ -13,6 +13,9 @@ const actions = {
     openModal
 }
 class SignUpPage extends Component {
+    state = {
+        error: ""
+    }
 
     
     handleFormSubmit = (signup) => {
@@ -35,18 +38,25 @@ class SignUpPage extends Component {
         })
         .then(res => {
             console.log(res)
-            this.props.closeModal()
-            this.props.openModal("LoginModal")
+            if (res.data.statusCode === 500) {
+                this.setState({
+                    error: "Something is wrong with your form submission, please check that you have not made an account already"
+                })
+            } else {
+                this.props.closeModal()
+                this.props.openModal("LoginModal")
+            }
+            
         })
         .catch(err => {
             console.log(err)
         })
     }
     render() {
-       
+        
         return (
         <div>
-          <SignUpForm handleFormSubmit={this.handleFormSubmit}/>
+            <SignUpForm handleFormSubmit={this.handleFormSubmit}/>
         </div>
         )
     }
