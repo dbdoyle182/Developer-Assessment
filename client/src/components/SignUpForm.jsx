@@ -10,16 +10,16 @@ const mapState = state => ({
 })
 
 const validate = combineValidators({
-  givenName: isRequired({message: "Please provide your given name"}),
-  familyName: isRequired({message: "Please provide your family name"}),
+  givenName: isRequired({message: "Please provide your first name"}),
+  familyName: isRequired({message: "Please provide your last name"}),
   password: composeValidators(
-    isRequired({message: 'Please provide a description'}),
-    hasLengthGreaterThan(6)({message: 'Description must have at least 5 characters'})
+    isRequired({message: 'Please provide a password'}),
+    hasLengthGreaterThan(6)({message: 'Password must have at least 6 characters'})
   )(),
   email: isRequired('email'),
   gender: isRequired('gender'),
-  phoneNumber1: isRequired('phoneNumber1'),
-  userName: isRequired('userName')
+  phoneNumber1: isRequired('Phone number is required'),
+  userName: isRequired('Username is required')
 })
 
 class SignUpForm extends Component {
@@ -36,13 +36,13 @@ class SignUpForm extends Component {
               name="givenName"
               type="text"
               component={TextInput}
-              placeholder="Known As"
+              placeholder="First Name"
             />
             <Field
               name="familyName"
               type="text"
               component={TextInput}
-              placeholder="Known As"
+              placeholder="Last Name"
             />
             <Field
               name="email"
@@ -54,7 +54,7 @@ class SignUpForm extends Component {
               name="gender"
               type="text"
               component={TextInput}
-              placeholder="Gender"
+              placeholder="Male or Female"
             />
             <Field
               name="phoneNumber1"

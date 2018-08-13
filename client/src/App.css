@@ -20,7 +20,8 @@
   margin-top: 10%;
   padding: 40px 0px;
   text-align: center;
-  background-color: rgb(219,223,227);
+  background-color: white;
+  border-radius: 5px
   
 }
 
@@ -29,5 +30,10 @@
 }
 
 .user_info {
-  background-color: rgb(219,223,227)
+  background-color: white;
+  border-radius: 5px
+}
+
+#user_info_header {
+  text-align: center
 }
