@@ -3,9 +3,11 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import { Segment, List, Loader, Dimmer, Button } from 'semantic-ui-react';
 import { openModal } from '../../store/modals/modalActions';
+import { logout } from '../../store/auth/authActions';
 
 const actions = {
-  openModal
+  openModal,
+  logout
 }
 
 class UserPage extends Component {
@@ -30,14 +32,30 @@ class UserPage extends Component {
     })
   }
 
+  handleDeleteUser = (user) => {
+    axios.delete(`https://rkprv2kx5b.execute-api.us-east-1.amazonaws.com/dev/admins/${user}`, {
+      headers: {
+        "x-api-key": "RfgackFzlO2IKAhmukniT25ZYIGbSyIH788tvf32"
+      }
+    }).then(res => {
+      console.log(res);
+      this.props.logout();
+    }).catch(err => {
+      console.log(err);
+    })
+  }
+
   render() {
     const { user } = this.state;
     const {openModal} = this.props;
     return (
       <div className="user_info">
         <Segment.Group>
-          <Segment>User Information <Button onClick={() => openModal("PasswordModal")} content="Change Password" basic/></Segment>
-        
+          <Segment>User Information 
+            <Button onClick={() => openModal("PasswordModal")} content="Change Password" basic/>
+            <Button onClick={() => this.handleDeleteUser(user.Username)} content="Delete Your Account" basic color="red" />
+          </Segment>
+
           {user.UserAttributes ?
           <Segment.Group>
             <List>

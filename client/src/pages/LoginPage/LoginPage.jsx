@@ -30,6 +30,7 @@ class LoginPage extends Component {
         'Access-Control-Allow-Origin':'*'
       }
     }).then(res => {
+      console.log(res)
       const userInfo = JSON.parse(res.config.data);
       console.log(userInfo.userName)
       this.props.login(userInfo.userName);

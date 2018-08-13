@@ -27,7 +27,7 @@ class LandingPage extends Component {
               </Header> 
             </div>
             :
-            <UserPage userName={auth.currentUser.creds.userName}/>
+            <UserPage userName={auth.currentUser.creds}/>
           }
           </Grid.Column>
           <Grid.Column width={6}>
